@@ -1,6 +1,7 @@
 package com.example.securenote.global.config;
 
 import com.example.securenote.global.handler.RestAuthHandlers;
+import com.example.securenote.global.jwt.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -8,13 +9,14 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     // 1. /api/** 전용 체인: Stateless + CSRF off + 401 JSON
     @Bean @Order(1)
-    SecurityFilterChain apiChain(HttpSecurity http, RestAuthHandlers restAuthHandlers) throws Exception {
+    SecurityFilterChain apiChain(HttpSecurity http, RestAuthHandlers restAuthHandlers, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
                 .securityMatcher("/api/**")
                 .csrf(csrf -> csrf.disable())
@@ -26,7 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/health").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
