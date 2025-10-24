@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"><title>로그인</title>
+</head>
+<body>
+<h2>웹 로그인</h2>
+
+<form method="post" action="/web/auth/login">
+    <label for="email">이메일</label>
+    <input id="email" name="email" type="email" required>
+
+    <label for="password">비밀번호</label>
+    <input id="password" name="password" type="password" required>
+
+    <!-- CSRF 토큰 -->
+    <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}"/>
+
+    <button type="submit">로그인</button>
+</form>
+
+{{#param.error}}
+    <p style="color:red;">로그인 실패</p>
+{{/param.error}}
+{{#param.logout}}
+    <p style="color:green;">로그아웃 완료</p>
+{{/param.logout}}
+
+<p><a href="/web/home">홈으로</a></p>
+</body>
+</html>

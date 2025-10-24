@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"><title>Home</title>
+</head>
+<body>
+<h2>세션 홈</h2>
+<p>로그인 성공 시 이 페이지가 보임</p>
+<form method="post" action="/web/auth/logout">
+    <input type="hidden" name="{{_csrf.parameterName}}" value="{{_csrf.token}}"/>
+    <button type="submit">로그아웃</button>
+</form>
+</body>
+</html>

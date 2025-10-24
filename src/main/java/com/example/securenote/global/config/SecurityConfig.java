@@ -36,11 +36,27 @@ public class SecurityConfig {
     @Bean @Order(2)
     SecurityFilterChain webChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/web/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error", "/css/**", "/js/**", "/images/**", "/health").permitAll()
+                        .requestMatchers("/web/auth/**", "/web/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults());
+                .formLogin(form -> form
+                        .loginPage("/web/auth/login")
+                        .loginProcessingUrl("/web/auth/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/web/home", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/web/auth/logout")
+                        .logoutSuccessUrl("/web/auth/login?logout")
+                )
+                // CSRF ON 해뒀음
+                .sessionManagement(sm -> sm
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                );
         return http.build();
     }
 }
